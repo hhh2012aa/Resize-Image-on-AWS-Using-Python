@@ -1,6 +1,6 @@
 
 import json
-import boto3import json
+import boto3
 import boto3
 from PIL import Image
 import logging
