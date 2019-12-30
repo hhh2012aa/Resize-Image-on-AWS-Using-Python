@@ -1,6 +1,5 @@
 import json
 import boto3
-import botocore
 
 def lambda_handler(event, context):
     Origin_URL = event['filename']
