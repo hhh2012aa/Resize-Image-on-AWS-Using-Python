@@ -5,6 +5,7 @@ import logging
 import tempfile
 
 
+
 def resize_1(input_file, key):
     im = Image.open(input_file)
     x_s = 640 
@@ -14,15 +15,25 @@ def resize_1(input_file, key):
     
 
 def lambda_handler(event, context):
-    s3 = boto3.client('s3')
-    bucket = event['Records'][0]['s3']['bucket']['name']
-    key = event['Records'][0]['s3']['object']['key']
     
+    try:
+        s3 = boto3.client('s3')
+        bucket = event['Records'][0]['s3']['bucket']['name']
+        key = event['Records'][0]['s3']['object']['key']
+        
+        
+        s3.download_file(bucket, key, '/tmp/' + key)
     
-    s3.download_file(bucket, key, '/tmp/' + key)
-
-    resize_1('/tmp/'+ key, key)
-    logging.error(event)
+        resize_1('/tmp/'+ key, key)
+        logging.error(event)
+    
+    except:
+        logging.error('Error')
+        return{
+            "statusCode":404,
+            "message":"Error, Cannot find the file",
+            
+            }
     try:
         if key[0:7] != 'Resized':
             s3.upload_file('/tmp/new_'+ key , bucket,  'Resized/Resized-'+ key)
@@ -30,15 +41,13 @@ def lambda_handler(event, context):
     except:
         logging.error('Error')
         return{
-            code:404,
-            status:"error",
-            message:"unauthorized token"
+            "statusCode":404,
+            "message":"Error, Already Resized",
+            
             }
-   
-   
    
    
     return {
         "statusCode": 200,
-        "body": json.dumps("Successed")
+        "body": json.dumps("Resize Successed")
     }
