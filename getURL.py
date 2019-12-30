@@ -3,7 +3,6 @@ import boto3
 import botocore
 
 def lambda_handler(event, context):
-    # TODO implement
     Origin_URL = event['filename']
     Resized_URL = "Resized/Resized-" + Origin_URL
     s3 = boto3.resource('s3')
