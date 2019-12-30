@@ -17,14 +17,16 @@ def lambda_handler(event, context):
     s3 = boto3.client('s3')
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = event['Records'][0]['s3']['object']['key']
+    
+    
     s3.download_file(bucket, key, '/tmp/' + key)
 
     resize_1('/tmp/'+ key, key)
-    logging.error(key)
+    logging.error(event)
     try:
-        if key[0:3] != 'Res':
+        if key[0:7] != 'Resized':
             s3.upload_file('/tmp/new_'+ key , bucket,  'Resized/Resized-'+ key)
-        
+            logging.error('Already Resized')
     except:
         logging.error('Error')
         return{
